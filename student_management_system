@@ -1,0 +1,122 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class studentManagementSystem {
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/student_management_system";
+    private static final String username = "root";
+    private static final String password = "Ansh@1234";
+
+    public static void main(String[] args) {
+
+        // 1 LOAD DRIVERS
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            // 2 Connection
+            Connection connection = DriverManager.getConnection(URL, username, password);
+
+            Scanner sc = new Scanner(System.in);
+
+            while (true) {
+
+                System.out.println("Choose the option.....");
+                System.out.println("1 : ADD STUDENT");
+                System.out.println("2 : VIEW STUDENT");
+                System.out.println("3 : UPDATE STUDENT");
+                System.out.println("4 : DELETE STUDENT");
+                System.out.println("5 : EXIT");
+                int choice = sc.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        String query = "INSERT INTO student (id, name, email, course, age) VALUES (?, ?, ?, ?, ?)";
+                        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+                        System.out.print("Enter id : ");
+                        int id = sc.nextInt();
+                        System.out.print("Enter name : ");
+                        String name = sc.next();
+                        System.out.print("Enter email : ");
+                        String email = sc.next();
+                        System.out.print("Enter course : ");
+                        String course = sc.next();
+                        System.out.print("Enter age : ");
+                        int age = sc.nextInt();
+
+                        preparedStatement.setInt(1, id);
+                        preparedStatement.setString(2, name);
+                        preparedStatement.setString(3, email);
+                        preparedStatement.setString(4, course);
+                        preparedStatement.setInt(5, age);
+
+                        preparedStatement.executeUpdate();
+                        System.out.println("Student added sucessfully...");
+
+                        break;
+
+                    case 2:
+                        Statement statement2 = connection.createStatement();
+                        String query2 = "SELECT * FROM student";
+                        ResultSet resultSet = statement2.executeQuery(query2);
+
+                        while (resultSet.next()) {
+                            id = resultSet.getInt("id");
+                            name = resultSet.getString("name");
+                            email = resultSet.getString("email");
+                            course = resultSet.getString("course");
+                            age = resultSet.getInt("age");
+
+                            System.out.println(id + " " + name + " " + email + " " + course + " " + age);
+                            System.out.println("--------------------------------------------------------");
+                        }
+                        break;
+                    case 3:
+                        String query3 = "UPDATE student SET course = ? , age = ? WHERE id = ?";
+                        PreparedStatement preparedStatement3 = connection.prepareStatement(query3);
+                        System.out.print("Enter ID number which want to change : ");
+                        id = sc.nextInt();
+                        System.out.print("Enter updated course : ");
+                        String newcourse = sc.next();
+                        System.out.print("Enter updated age : ");
+                        int newage = sc.nextInt();
+
+                        preparedStatement3.setString(1, newcourse);
+                        preparedStatement3.setInt(2, newage);
+                        preparedStatement3.setInt(3, id);
+
+                        preparedStatement3.executeUpdate();
+                        System.out.println("DATA UPDATED......");
+
+                        break;
+
+                    case 4:
+                        String query4 = "DELETE FROM student WHERE id = ?";
+                        PreparedStatement preparedStatement4 = connection.prepareStatement(query4);
+                        System.out.print("Enter id which want to delete : ");
+                        int delete = sc.nextInt();
+
+                        preparedStatement4.setInt(1, delete);
+                        preparedStatement4.executeUpdate();
+                        System.out.println("DELETED SUCCESSFULLY.....");
+                        break;
+
+                    case 5:
+                        System.out.println("EXITTING THE PROGRAM.......");
+                        connection.close();
+                        sc.close();
+                        return;
+                    default:
+                        System.out.println("Invalid choice! Please select between 1-5.");
+                }
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+}
