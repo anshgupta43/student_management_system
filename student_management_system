@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class studentManagementSystem {
     private static final String URL = "jdbc:mysql://127.0.0.1:3306/student_management_system";
     private static final String username = "root";
-    private static final String password = "Ansh@1234";
+    private static final String password = "********";
 
     public static void main(String[] args) {
 
